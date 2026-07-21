@@ -60,7 +60,7 @@ Suggested demo:
 ## Architecture
 
 ```text
-Studio plugin ⇄ queued command bridge ⇄ ReAct agent ⇄ Claude Sonnet 4
+Studio plugin ⇄ queued command bridge ⇄ ReAct agent ⇄ Codex
                                               ↓
                                       outcome evaluator
                                               ↓ failure
