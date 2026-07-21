@@ -71,6 +71,14 @@ Studio plugin ⇄ queued command bridge ⇄ ReAct agent ⇄ Claude Sonnet 4
 
 The plugin is the only component allowed to mutate the open Studio project. Each command is typed, returns a structured observation, and marks destructive operations for confirmation.
 
+## How ChatGPT and Codex helped
+
+ChatGPT and OpenAI Codex were used as collaborative development tools throughout the hackathon. ChatGPT helped brainstorm the product direction, break the idea into an achievable vertical slice, and reason through the agent architecture, safety boundaries, and demo flow. It also helped turn rough ideas and test results into clearer implementation plans and documentation.
+
+Codex worked directly with the project files and development environment. It helped scaffold and refine the TypeScript backend and Roblox Studio plugin, implement the ReAct and Reflexion loops, connect typed tools to Studio, diagnose integration issues, and run focused checks while the project evolved. Codex also assisted with scripts used to build and test the Roblox experience and with keeping the README aligned with the working system.
+
+These tools accelerated iteration and helped surface edge cases, but the project was directed, reviewed, tested, and submitted by the human developer. AI-generated suggestions and code were treated as drafts and verified against the actual Roblox Studio experience before being accepted.
+
 ## Known hackathon limitations
 
 - Roblox Studio does not expose viewport pixel capture directly to ordinary plugins. `capture_viewport` currently returns camera evidence.
