@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Download, install, and test the OpenAI-powered Roblox Hackathon Agent." />
+    <title>Roblox Hackathon Agent — Judge Setup</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Roblox Hackathon Agent home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>ROBLOX<span class="brand-muted">/AGENT</span></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#setup">Setup</a>
+        <a href="#test">Test</a>
+        <a href="https://github.com/awantony3/Roblox-Hackathon-Agent" target="_blank" rel="noreferrer">Source ↗</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="status-dot"></span> Judge-ready setup guide</div>
+          <h1>Build Roblox worlds<br /><span>with an OpenAI agent.</span></h1>
+          <p class="hero-lede">Download the complete agent, connect it to Roblox Studio, and run an end-to-end game-building test in about ten minutes.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip">
+              <span>Download agent</span><span aria-hidden="true">↓</span>
+            </a>
+            <a class="button button-secondary" href="#setup">View exact steps <span aria-hidden="true">→</span></a>
+          </div>
+          <p class="download-note">Main branch ZIP · Source code included · No installer required</p>
+        </div>
+
+        <div class="agent-card" aria-label="Agent runtime overview">
+          <div class="card-topbar">
+            <span>agent.runtime</span>
+            <div><i></i><i></i><i></i></div>
+          </div>
+          <div class="runtime-visual">
+            <div class="runtime-core">
+              <div class="core-rings"><span></span><span></span><span></span></div>
+              <strong>GPT</strong><small>5.6</small>
+            </div>
+            <div class="runtime-node node-one">PLAN</div>
+            <div class="runtime-node node-two">ACT</div>
+            <div class="runtime-node node-three">VERIFY</div>
+          </div>
+          <div class="runtime-stats">
+            <div><span>MODEL</span><strong>OpenAI GPT-5.6</strong></div>
+            <div><span>TOOLS</span><strong>26 typed actions</strong></div>
+            <div><span>SAFETY</span><strong>Human approval</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-facts" aria-label="Project facts">
+        <div><span>01</span><p><strong>OpenAI-powered</strong><br />ReAct + Reflexion runtime</p></div>
+        <div><span>02</span><p><strong>Studio-native</strong><br />Typed, undoable mutations</p></div>
+        <div><span>03</span><p><strong>Evidence-first</strong><br />Verifies before completion</p></div>
+      </section>
+
+      <section class="section setup-section" id="setup">
+        <div class="section-heading">
+          <div><span class="section-number">01</span><p class="kicker">Installation</p></div>
+          <h2>From ZIP to running agent.</h2>
+          <p>Complete these steps in order. Every command can be copied with one click.</p>
+        </div>
+
+        <div class="requirements">
+          <div class="requirement-title">Before you begin</div>
+          <ul>
+            <li><span>✓</span> macOS computer</li>
+            <li><span>✓</span> Node.js 18+</li>
+            <li><span>✓</span> Roblox Studio</li>
+            <li><span>✓</span> OpenAI API key</li>
+          </ul>
+        </div>
+
+        <ol class="steps">
+          <li class="step">
+            <div class="step-index">01</div>
+            <div class="step-content">
+              <h3>Download and extract</h3>
+              <p>Download the latest main branch, open the ZIP, and move the extracted folder somewhere easy to find.</p>
+              <a class="inline-link" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip">Download main.zip ↓</a>
+            </div>
+          </li>
+
+          <li class="step">
+            <div class="step-index">02</div>
+            <div class="step-content">
+              <h3>Open the project in Terminal</h3>
+              <p>Type <code>cd</code>, add a space, drag the extracted project folder into Terminal, and press Return.</p>
+              <div class="code-block"><code>cd /path/to/Roblox-Hackathon-Agent-main</code><button class="copy-button" data-copy="cd /path/to/Roblox-Hackathon-Agent-main">Copy</button></div>
+            </div>
+          </li>
+
+          <li class="step">
+            <div class="step-index">03</div>
+            <div class="step-content">
+              <h3>Create the environment file</h3>
+              <p>Copy the safe example configuration, then open the new <code>.env</code> file in any text editor.</p>
+              <div class="code-block"><code>cp .env.example .env</code><button class="copy-button" data-copy="cp .env.example .env">Copy</button></div>
+            </div>
+          </li>
+
+          <li class="step step-featured">
+            <div class="step-index">04</div>
+            <div class="step-content">
+              <h3>Add the required credentials</h3>
+              <p>Paste a valid OpenAI API key into <code>.env</code>. Keep this file private and never commit it.</p>
+              <div class="code-block multiline"><code>OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5.6
+AGENT_API_KEY=change-me</code><button class="copy-button" data-copy="OPENAI_API_KEY=your-openai-api-key&#10;OPENAI_MODEL=gpt-5.6&#10;AGENT_API_KEY=change-me">Copy</button></div>
+              <div class="callout"><strong>Credential note</strong><p><code>AGENT_API_KEY=change-me</code> works for local judging. The OpenAI key must be supplied by the tester and is not included in the repository.</p></div>
+            </div>
+          </li>
+
+          <li class="step">
+            <div class="step-index">05</div>
+            <div class="step-content">
+              <h3>Install and verify</h3>
+              <p>Install dependencies, run the automated tests, then check local readiness. The doctor may warn that <code>change-me</code> is the default local key; that key intentionally matches the plugin's default for this judge test.</p>
+              <div class="code-block multiline"><code>npm install
+npm run typecheck
+npm test
+npm run doctor</code><button class="copy-button" data-copy="npm install&#10;npm run typecheck&#10;npm test&#10;npm run doctor">Copy</button></div>
+            </div>
+          </li>
+
+          <li class="step">
+            <div class="step-index">06</div>
+            <div class="step-content">
+              <h3>Install the Studio plugin</h3>
+              <p>Run the included sync script, then fully restart Roblox Studio.</p>
+              <div class="code-block multiline"><code>chmod +x studio-plugin/sync.sh
+./studio-plugin/sync.sh</code><button class="copy-button" data-copy="chmod +x studio-plugin/sync.sh&#10;./studio-plugin/sync.sh">Copy</button></div>
+            </div>
+          </li>
+
+          <li class="step">
+            <div class="step-index">07</div>
+            <div class="step-content">
+              <h3>Start the backend</h3>
+              <p>Keep this Terminal window open while testing. A successful start listens on port 3100.</p>
+              <div class="code-block"><code>npm start</code><button class="copy-button" data-copy="npm start">Copy</button></div>
+            </div>
+          </li>
+
+          <li class="step">
+            <div class="step-index">08</div>
+            <div class="step-content">
+              <h3>Connect Roblox Studio</h3>
+              <p>Open a place, enable <strong>Game Settings → Security → Allow HTTP Requests</strong>, then select <strong>Plugins → Roblox AI Agent → Agent</strong>.</p>
+              <div class="success-line"><span>✓</span> The panel should show a connected session.</div>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section test-section" id="test">
+        <div class="section-heading compact">
+          <div><span class="section-number">02</span><p class="kicker">Judge test</p></div>
+          <h2>Run the flagship prompt.</h2>
+          <p>Paste this request into the plugin panel to test planning, construction, scripting, animation, and verification.</p>
+        </div>
+        <div class="prompt-card">
+          <div class="prompt-label"><span>TEST PROMPT</span><span>01 / 01</span></div>
+          <blockquote>Build a compact neon dungeon with a collectible key, an animated door, an enemy, health UI, and a victory portal. Use server-authoritative gameplay code.</blockquote>
+          <button class="button button-primary copy-prompt" data-copy="Build a compact neon dungeon with a collectible key, an animated door, an enemy, health UI, and a victory portal. Use server-authoritative gameplay code.">Copy test prompt</button>
+        </div>
+
+        <div class="judge-checklist">
+          <h3>What to look for</h3>
+          <div class="check-grid">
+            <label><input type="checkbox" /><span>Project scan appears in the task trace</span></label>
+            <label><input type="checkbox" /><span>New instances are created in Studio</span></label>
+            <label><input type="checkbox" /><span>Luau gameplay scripts are generated</span></label>
+            <label><input type="checkbox" /><span>Destructive changes request approval</span></label>
+            <label><input type="checkbox" /><span>Agent inspects changes after mutation</span></label>
+            <label><input type="checkbox" /><span>Final response cites observed evidence</span></label>
+          </div>
+        </div>
+      </section>
+
+      <section class="section troubleshooting">
+        <div class="section-heading compact">
+          <div><span class="section-number">03</span><p class="kicker">Quick fixes</p></div>
+          <h2>If something is not connected.</h2>
+        </div>
+        <div class="faq-grid">
+          <details><summary>The plugin says offline</summary><p>Confirm <code>npm start</code> is still running, HTTP requests are enabled in Studio, and the plugin was installed before Studio was restarted.</p></details>
+          <details><summary>The API key is rejected</summary><p>Confirm <code>OPENAI_API_KEY</code> has a valid key with model access. Do not add quotation marks around the value.</p></details>
+          <details><summary>The doctor says not ready</summary><p>Follow each failed line from <code>npm run doctor</code>. The Meshy key is optional; the OpenAI key, custom agent key, and installed plugin are the core checks.</p></details>
+          <details><summary>A Studio change is waiting</summary><p>Read the confirmation shown in the plugin and approve it within 20 seconds. Destructive actions intentionally fail closed when not approved.</p></details>
+        </div>
+      </section>
+
+      <section class="final-cta">
+        <p class="kicker">Ready to evaluate</p>
+        <h2>Download. Connect. Build.</h2>
+        <div class="hero-actions centered">
+          <a class="button button-primary" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip">Download agent <span>↓</span></a>
+          <a class="button button-secondary" href="https://github.com/awantony3/Roblox-Hackathon-Agent" target="_blank" rel="noreferrer">View source <span>↗</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><span></span></span><span>ROBLOX<span class="brand-muted">/AGENT</span></span></a>
+      <p>OpenAI-powered · Built for Roblox Studio · Human-reviewed</p>
+      <a href="https://github.com/awantony3/Roblox-Hackathon-Agent" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </footer>
+
+    <div class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+    <script src="./script.js"></script>
+  </body>
+</html>
