@@ -2,7 +2,7 @@
 
 An autonomous Roblox Studio game-building agent that turns a natural-language goal into inspected, implemented, and verified changes inside an open Roblox project.
 
-The system combines a DeepSeek-powered ReAct loop, typed tools, a queued HTTP bridge, a Roblox Studio plugin, evidence-based outcome evaluation, Reflexion retries, and human approval for destructive actions. ChatGPT and OpenAI Codex were used as development collaborators while building the project.
+The system combines an OpenAI GPT-5.6-powered ReAct loop, typed tools, a queued HTTP bridge, a Roblox Studio plugin, evidence-based outcome evaluation, Reflexion retries, and human approval for destructive actions. ChatGPT and OpenAI Codex were also used as development collaborators while building the project.
 
 ## What it can do
 
@@ -27,7 +27,7 @@ User request
 Express API server
     │ creates a task
     ▼
-ReActAgent ───────────────► DeepSeek chat-completions API
+ReActAgent ───────────────► OpenAI GPT-5.6 API
     ▲                                │
     │                                │ returns text and typed tool calls
     │                                ▼
@@ -77,7 +77,7 @@ The API is protected by `AGENT_API_KEY`, except for the public health endpoint.
 
 ### 2. ReAct reasoning loop
 
-`backend/src/agent/ReActAgent.ts` controls the main agent loop. The runtime model is accessed through `DeepSeekClient`, which uses DeepSeek's OpenAI-compatible chat-completions endpoint and function-calling format.
+`backend/src/agent/ReActAgent.ts` controls the main agent loop. The runtime model is accessed through `OpenAIClient`, which uses the official OpenAI SDK and function calling.
 
 For each attempt, the agent:
 
@@ -138,7 +138,7 @@ Validated reflections are stored by `backend/src/memory/LessonStore.ts`. A lesso
 backend/
 ├── src/
 │   ├── agent/
-│   │   ├── DeepSeekClient.ts      # Runtime model client
+│   │   ├── OpenAIClient.ts        # Official OpenAI runtime client
 │   │   ├── ReActAgent.ts          # Main tool-use loop
 │   │   ├── OutcomeEvaluator.ts    # Evidence-based success checks
 │   │   ├── ReflexionEngine.ts     # Structured retry strategy
@@ -166,13 +166,13 @@ docs/                              # Supporting project documentation
 
 - Node.js 18 or newer
 - Roblox Studio for macOS
-- A DeepSeek API key
+- An OpenAI API key
 
 ### Start the backend
 
 ```bash
 cp .env.example .env
-# Add DEEPSEEK_API_KEY to .env and change AGENT_API_KEY if desired.
+# Add OPENAI_API_KEY to .env and change AGENT_API_KEY if desired.
 npm install
 npm start
 ```

@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import type { ChatCompletionMessageFunctionToolCall, ChatCompletionMessageParam, ChatCompletionTool } from "openai/resources/chat/completions";
 import { config } from "../config.js";
 import { tools, executeTool } from "../tools/registry.js";
 import { LessonStore } from "../memory/LessonStore.js";
@@ -7,22 +7,23 @@ import { OutcomeEvaluator } from "./OutcomeEvaluator.js";
 import { ReflexionEngine } from "./ReflexionEngine.js";
 import { retryPrompt, SYSTEM_PROMPT } from "./prompts.js";
 import { FailedActionGuard } from "./FailedActionGuard.js";
+import { OpenAIClient } from "./OpenAIClient.js";
 
 type TraceItem = { tool: string; input: Record<string, unknown>; result: ToolResult };
 
 export class ReActAgent {
-  private client: Anthropic;
+  private client: OpenAIClient;
   private evaluator = new OutcomeEvaluator();
   private lessons = new LessonStore();
   private reflexion: ReflexionEngine;
 
   constructor() {
-    this.client = new Anthropic({ apiKey: config.anthropicApiKey });
+    this.client = new OpenAIClient();
     this.reflexion = new ReflexionEngine(this.client);
   }
 
   async run(sessionId: string, goal: string, onState: (state: AgentState, detail?: unknown) => void = () => {}) {
-    if (!config.anthropicApiKey) throw new Error("ANTHROPIC_API_KEY is not configured");
+    if (!config.openaiApiKey) throw new Error("OPENAI_API_KEY is not configured");
     let prompt = goal;
     let reflection: Reflection | undefined;
     const completeTrace: TraceItem[] = [];
@@ -57,31 +58,49 @@ export class ReActAgent {
   }
 
   private async runAttempt(sessionId: string, prompt: string, onState: (state: AgentState, detail?: unknown) => void, failedActionGuard: FailedActionGuard) {
-    const messages: Anthropic.MessageParam[] = [{ role: "user", content: prompt }];
+    const messages: ChatCompletionMessageParam[] = [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: prompt }
+    ];
+    const openaiTools: ChatCompletionTool[] = tools.map((tool) => ({
+      type: "function",
+      function: { name: tool.name, description: tool.description, parameters: tool.input_schema }
+    }));
     const trace: TraceItem[] = [];
     let finalText = "";
 
     for (let iteration = 0; iteration < config.maxIterations; iteration++) {
       onState("acting", { iteration: iteration + 1 });
-      const response = await this.client.messages.create({ model: config.model, max_tokens: 4096, system: SYSTEM_PROMPT, tools, messages });
-      messages.push({ role: "assistant", content: response.content });
-      finalText = response.content.filter((b) => b.type === "text").map((b) => b.text).join("\n") || finalText;
-      const calls = response.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
+      const response = await this.client.chat.completions.create({
+        model: config.model,
+        max_completion_tokens: 4096,
+        messages,
+        tools: openaiTools,
+        tool_choice: "auto"
+      });
+      const message = response.choices[0]?.message;
+      if (!message) throw new Error("OpenAI API returned no assistant message");
+      messages.push(message);
+      finalText = message.content || finalText;
+      const calls = (message.tool_calls || []).filter(
+        (call): call is ChatCompletionMessageFunctionToolCall => call.type === "function"
+      );
       if (!calls.length) return { text: finalText, trace };
 
-      onState("observing", { tools: calls.map((c) => c.name) });
-      const results: Anthropic.ToolResultBlockParam[] = [];
+      onState("observing", { tools: calls.map((c) => c.function.name) });
       for (const call of calls) {
-        const input = call.input as Record<string, unknown>;
-        const previousFailure = failedActionGuard.previousFailure(call.name, input);
+        let input: Record<string, unknown>;
+        try { input = JSON.parse(call.function.arguments || "{}"); }
+        catch { input = {}; }
+        const toolName = call.function.name;
+        const previousFailure = failedActionGuard.previousFailure(toolName, input);
         const result = previousFailure
           ? { success: false, error: `Repeated failed action blocked. Previous failure: ${previousFailure}` }
-          : await executeTool(sessionId, call.name, input);
-        failedActionGuard.observe(call.name, input, result);
-        trace.push({ tool: call.name, input, result });
-        results.push({ type: "tool_result", tool_use_id: call.id, content: JSON.stringify(result), is_error: !result.success });
+          : await executeTool(sessionId, toolName, input);
+        failedActionGuard.observe(toolName, input, result);
+        trace.push({ tool: toolName, input, result });
+        messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(result) });
       }
-      messages.push({ role: "user", content: results });
     }
     return { text: finalText || "Iteration budget exhausted", trace: [...trace, { tool: "agent_budget", input: {}, result: { success: false, error: "Iteration budget exhausted" } }] };
   }

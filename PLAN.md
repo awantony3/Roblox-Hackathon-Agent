@@ -61,7 +61,7 @@ The project is separate from `/Users/antonywang/roblox-ai-assistant`. The older 
 └────────────────────────────┬─────────────────────────────────┘
                              │
                              ▼
-                    Claude Sonnet 4 API
+                      OpenAI GPT-5.6 API
 ```
 
 ## 4. Agent framework
@@ -207,7 +207,7 @@ Implementation tasks:
 Status: **Complete**
 
 - Independent TypeScript project created.
-- Claude Sonnet 4 configured as the default model.
+- OpenAI GPT-5.6 configured as the default model.
 - Backend API and Studio command queue implemented.
 - Studio plugin panel implemented.
 - ReAct loop, evaluator, Reflexion engine, and lesson store implemented.
@@ -417,7 +417,7 @@ The demo depends on Roblox Studio, local HTTP permissions, the backend, API cred
 
 ## 11. Immediate next actions
 
-1. Configure `.env` with `ANTHROPIC_API_KEY` and a non-default `AGENT_API_KEY`.
+1. Configure `.env` with `OPENAI_API_KEY` and a non-default `AGENT_API_KEY`.
 2. Match the plugin `API_KEY` to the backend configuration.
 3. Install the plugin with `./studio-plugin/sync.sh`.
 4. Enable Roblox Studio HTTP requests.

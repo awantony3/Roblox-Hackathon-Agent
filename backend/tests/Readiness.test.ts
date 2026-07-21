@@ -6,5 +6,5 @@ test("readiness reports required files and configuration without secrets", async
   const report = await runReadinessChecks("/definitely-not-a-real-home");
   assert.equal(report.checks.some((check) => check.name === "Studio plugin source" && check.ok), true);
   assert.equal(report.checks.some((check) => check.name === "Installed Studio plugin" && !check.ok), true);
-  assert.equal(JSON.stringify(report).includes("sk-ant"), false);
+  assert.equal(JSON.stringify(report).includes("sk-proj"), false);
 });

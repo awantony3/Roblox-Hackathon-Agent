@@ -6,7 +6,7 @@ Date: 2026-07-12
 
 - Platform: macOS
 - Backend: `http://localhost:3100`
-- Model configuration: `claude-sonnet-4-20250514`
+- Original model configuration: legacy provider (the runtime now uses `gpt-5.6`)
 - Studio place ID: `117814451127411`
 - Studio game ID: `10485307397`
 
@@ -31,7 +31,7 @@ Date: 2026-07-12
 
 ## External blocker
 
-The live Claude-driven task could not start because the configured Anthropic account returned `credit balance is too low`. The plugin and command protocol were therefore tested directly through the authenticated diagnostic endpoint.
+The original live model-driven task could not start because the configured legacy provider account had insufficient credit. The plugin and command protocol were therefore tested directly through the authenticated diagnostic endpoint. The current runtime uses the OpenAI API.
 
 ## Cleanup
 
