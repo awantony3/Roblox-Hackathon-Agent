@@ -18,9 +18,9 @@
         <span>ROBLOX<span class="brand-muted">/AGENT</span></span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="#setup">Setup</a>
-        <a href="#test">Test</a>
+        <a href="#setup">Full instructions</a>
         <a href="https://github.com/awantony3/Roblox-Hackathon-Agent" target="_blank" rel="noreferrer">Source ↗</a>
+        <a class="nav-download" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip">Download ZIP ↓</a>
       </nav>
     </header>
 
@@ -28,36 +28,33 @@
       <section class="hero">
         <div class="hero-copy">
           <div class="eyebrow"><span class="status-dot"></span> Judge-ready setup guide</div>
-          <h1>Build Roblox worlds<br /><span>with an OpenAI agent.</span></h1>
-          <p class="hero-lede">Download the complete agent, connect it to Roblox Studio, and run an end-to-end game-building test in about ten minutes.</p>
+          <h1>Download the agent.<br /><span>Follow the steps.</span></h1>
+          <p class="hero-lede">Everything judges need is on this page: the complete agent download, required credentials, exact commands, Roblox Studio setup, and a test prompt.</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip">
-              <span>Download agent</span><span aria-hidden="true">↓</span>
+            <a class="button button-primary download-main" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip" download>
+              <span>Download complete agent (.zip)</span><span aria-hidden="true">↓</span>
             </a>
-            <a class="button button-secondary" href="#setup">View exact steps <span aria-hidden="true">→</span></a>
+            <a class="button button-secondary" href="#setup">Open detailed instructions <span aria-hidden="true">↓</span></a>
           </div>
-          <p class="download-note">Main branch ZIP · Source code included · No installer required</p>
+          <p class="download-note">Roblox-Hackathon-Agent-main.zip · Complete source · Latest main branch</p>
         </div>
 
-        <div class="agent-card" aria-label="Agent runtime overview">
-          <div class="card-topbar">
-            <span>agent.runtime</span>
-            <div><i></i><i></i><i></i></div>
+        <div class="start-card" aria-label="Exact setup steps">
+          <div class="start-card-header">
+            <span>EXACT SETUP — 8 STEPS</span>
+            <span>≈ 10 MIN</span>
           </div>
-          <div class="runtime-visual">
-            <div class="runtime-core">
-              <div class="core-rings"><span></span><span></span><span></span></div>
-              <strong>GPT</strong><small>5.6</small>
-            </div>
-            <div class="runtime-node node-one">PLAN</div>
-            <div class="runtime-node node-two">ACT</div>
-            <div class="runtime-node node-three">VERIFY</div>
-          </div>
-          <div class="runtime-stats">
-            <div><span>MODEL</span><strong>OpenAI GPT-5.6</strong></div>
-            <div><span>TOOLS</span><strong>26 typed actions</strong></div>
-            <div><span>SAFETY</span><strong>Human approval</strong></div>
-          </div>
+          <ol class="start-list">
+            <li><span>1</span><div><strong>Download</strong><small>Get the complete ZIP above</small></div></li>
+            <li><span>2</span><div><strong>Extract</strong><small>Open the downloaded ZIP</small></div></li>
+            <li><span>3</span><div><strong>Open Terminal</strong><small>Run commands inside the folder</small></div></li>
+            <li><span>4</span><div><strong>Add credentials</strong><small>Set OPENAI_API_KEY in .env</small></div></li>
+            <li><span>5</span><div><strong>Install</strong><small>Run npm install and checks</small></div></li>
+            <li><span>6</span><div><strong>Install plugin</strong><small>Run studio-plugin/sync.sh</small></div></li>
+            <li><span>7</span><div><strong>Start agent</strong><small>Run npm start</small></div></li>
+            <li><span>8</span><div><strong>Test in Studio</strong><small>Enable HTTP and run the prompt</small></div></li>
+          </ol>
+          <a class="start-card-link" href="#setup">See commands and screenshots guidance ↓</a>
         </div>
       </section>
 
@@ -221,6 +218,7 @@ npm run doctor</code><button class="copy-button" data-copy="npm install&#10;npm 
     </footer>
 
     <div class="toast" role="status" aria-live="polite">Copied to clipboard</div>
+    <a class="sticky-download" href="https://github.com/awantony3/Roblox-Hackathon-Agent/archive/refs/heads/main.zip" download><span>Download complete agent</span><strong>ZIP ↓</strong></a>
     <script src="./script.js"></script>
   </body>
 </html>
