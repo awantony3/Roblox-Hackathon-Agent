@@ -1,99 +1,115 @@
 # Roblox Hackathon Agent
 
-An independent Roblox Studio game-building agent inspired by the architecture of `roblox-ai-assistant`, without importing its implementation. It uses a ReAct tool loop and evidence-based Reflexion retries.
+An OpenAI-assisted agent that turns natural-language game ideas into working Roblox Studio experiences. It combines a typed Studio tool layer, a ReAct execution loop, evidence-based Reflexion retries, and human approval for destructive actions.
 
-## Current vertical slice
+## What it does
 
-- Sees the Explorer hierarchy, selected instances, script source, common part properties, and camera state.
-- Creates and edits instances and Luau scripts.
-- Patches exact script fragments with confirmation and size limits.
-- Builds batches of instances from a declarative specification.
+- Inspects the Explorer hierarchy, selected instances, scripts, common properties, and camera state.
+- Creates and edits Roblox instances and Luau scripts.
+- Applies exact, size-limited script patches with confirmation.
+- Builds groups of instances from declarative specifications.
 - Creates TweenService animation scripts from typed goals.
-- Adds existing Roblox animation assets to rigs.
-- Generates KeyframeSequences, previews them locally on rigs, and opens Roblox's confirmed native publishing workflow.
-- Searches Creator Store models, quarantines them, scans scripts, and removes scripts by default before insertion.
-- Creates and polls Meshy low-poly 3D jobs, then downloads trusted GLB/FBX artifacts with size limits.
-- Exposes adapters for animation upload and external 3D generation.
-- Requires in-Studio approval for script replacement and deletion.
-- Destructive approval expires before the backend command timeout, preventing late execution after a reported timeout.
-- Evaluates tool evidence and performs at most two Reflexion retries.
-- Observes Play-assisted runtime errors, output, player state, and typed assertions.
-- Stores only lessons that led to a subsequently successful attempt.
+- Adds existing animation assets to rigs.
+- Generates and previews KeyframeSequences before opening Roblox Studio's native publishing workflow.
+- Searches Creator Store models, quarantines imports, scans scripts, and removes embedded scripts by default.
+- Starts Meshy low-poly 3D generation jobs and downloads trusted GLB or FBX artifacts with size limits.
+- Observes playtests through runtime output, player state, errors, and typed assertions.
+- Evaluates tool evidence and performs up to two Reflexion retries when an attempt fails.
+- Stores only lessons that are followed by a successful attempt.
 
-The agent is genre-neutral: genre behavior comes from the user goal and generated Roblox systems, not hard-coded templates.
+The agent is genre-neutral. Game behavior comes from the user's prompt and the generated Roblox systems rather than hard-coded templates.
 
-## Run tonight
+## Quick start
 
-Requirements: Node.js 18+, Roblox Studio for macOS, and an Anthropic API key.
+### Requirements
+
+- Node.js 18 or newer
+- Roblox Studio for macOS
+- An OpenAI API key
+
+### Start the backend
 
 ```bash
 cp .env.example .env
-# Put ANTHROPIC_API_KEY in .env and change AGENT_API_KEY if desired.
+# Add OPENAI_API_KEY to .env and change AGENT_API_KEY if desired.
 npm install
 npm start
 ```
 
-Run the readiness doctor before opening Studio:
+Check the local setup before opening Roblox Studio:
 
 ```bash
 npm run doctor
 ```
 
-The plugin defaults to `change-me` for local setup. For a custom key, set the plugin setting `RobloxHackathonAgent.ApiKey` to match `AGENT_API_KEY`, then install the plugin:
+### Install the Studio plugin
+
+The plugin uses `change-me` as its default local API key. If you set a custom `AGENT_API_KEY`, set the Roblox plugin setting `RobloxHackathonAgent.ApiKey` to the same value.
 
 ```bash
 chmod +x studio-plugin/sync.sh
 ./studio-plugin/sync.sh
 ```
 
-In Roblox Studio:
+Then:
 
-1. Enable **Game Settings → Security → Allow HTTP Requests**.
-2. Restart Studio after installing the plugin.
-3. Open a place and select **Plugins → Roblox AI Agent → Agent**.
-4. Enter a game-building request.
+1. Open Roblox Studio.
+2. Enable **Game Settings → Security → Allow HTTP Requests**.
+3. Restart Studio after installing the plugin.
+4. Select **Plugins → Roblox AI Agent → Agent**.
+5. Enter a game-building request.
 
-Suggested demo:
+Try this prompt:
 
 > Build a compact neon dungeon with a collectible key, an animated door, an enemy, health UI, and a victory portal. Use server-authoritative gameplay code.
 
 ## Architecture
 
 ```text
-Studio plugin ⇄ queued command bridge ⇄ ReAct agent ⇄ Codex
-                                              ↓
-                                      outcome evaluator
-                                              ↓ failure
-                                          Reflexion
-                                              ↓
-                                      revised ReAct attempt
+Roblox Studio plugin ⇄ queued command bridge ⇄ ReAct agent ⇄ OpenAI Codex
+                                                       ↓
+                                               outcome evaluator
+                                                       ↓ failure
+                                                   Reflexion
+                                                       ↓
+                                               revised ReAct attempt
 ```
 
-The plugin is the only component allowed to mutate the open Studio project. Each command is typed, returns a structured observation, and marks destructive operations for confirmation.
+The Roblox Studio plugin is the only component allowed to mutate the open project. Every command is typed and returns a structured observation. Script replacement, deletion, and other destructive operations require explicit in-Studio approval. Approval expires before the backend timeout so a command cannot execute after being reported as timed out.
 
-## How ChatGPT and Codex helped
+## How OpenAI helped
 
-ChatGPT and OpenAI Codex were used as collaborative development tools throughout the hackathon. ChatGPT helped brainstorm the product direction, break the idea into an achievable vertical slice, and reason through the agent architecture, safety boundaries, and demo flow. It also helped turn rough ideas and test results into clearer implementation plans and documentation.
+ChatGPT helped shape the product direction, reduce the idea to an achievable hackathon scope, reason through the architecture and safety boundaries, and turn rough notes and test results into implementation plans and documentation.
 
-Codex worked directly with the project files and development environment. It helped scaffold and refine the TypeScript backend and Roblox Studio plugin, implement the ReAct and Reflexion loops, connect typed tools to Studio, diagnose integration issues, and run focused checks while the project evolved. Codex also assisted with scripts used to build and test the Roblox experience and with keeping the README aligned with the working system.
+OpenAI Codex worked directly with the repository and development environment. It helped scaffold and refine the TypeScript backend and Roblox Studio plugin, implement the ReAct and Reflexion loops, connect typed tools to Studio, diagnose integration problems, run focused checks, and create scripts used to build and test the Roblox experience.
 
-These tools accelerated iteration and helped surface edge cases, but the project was directed, reviewed, tested, and submitted by the human developer. AI-generated suggestions and code were treated as drafts and verified against the actual Roblox Studio experience before being accepted.
+OpenAI tools accelerated iteration and helped identify edge cases. The human developer directed the project, made product decisions, reviewed the generated work, tested it in Roblox Studio, and prepared the final submission. AI suggestions and code were treated as drafts until they were verified in the working experience.
 
-## Known hackathon limitations
+## Safety design
 
-- Roblox Studio does not expose viewport pixel capture directly to ordinary plugins. `capture_viewport` currently returns camera evidence.
-- Automatic play-mode launch is not exposed reliably to plugins. The user presses Play; `run_playtest` then captures a bounded runtime observation window and evaluates assertions.
-- Roblox's documented Open Cloud upload types do not currently include animations. Animation publishing uses Studio's authenticated native window and remains incomplete until the user supplies the published asset ID.
-- Meshy generation requires `MESHY_API_KEY`. Downloaded GLB/FBX artifacts still require Roblox Studio's native 3D Importer.
-- Studio mutations are recorded in Change History; failed commands cancel their active recording and successful commands are undoable.
+- Only the Studio plugin can modify the open Roblox project.
+- Commands use typed inputs and structured observations.
+- Script replacement and deletion require explicit approval.
+- Imported Creator Store assets are quarantined and scanned.
+- Embedded scripts are removed from imported models by default.
+- Failed Studio commands cancel their active Change History recording.
+- Successful Studio mutations remain undoable.
+- External artifacts are restricted by trust and size checks.
 
-## Next implementation order
+## Hackathon limitations
 
-1. Add change journal and batch rollback.
-2. Add a Play button-assisted runtime observer for real playtest evidence.
-3. Add post-publish animation ownership verification after the user supplies the asset ID.
-4. Add conversion checks and a guided native 3D import workflow for Meshy artifacts.
+- Ordinary Roblox Studio plugins cannot directly capture viewport pixels, so `capture_viewport` currently returns camera evidence.
+- Plugins cannot reliably launch play mode automatically. The user starts Play, and `run_playtest` captures a bounded observation window and evaluates assertions.
+- Roblox Open Cloud does not currently expose animation uploads for this workflow. Publishing opens Studio's authenticated native interface and remains incomplete until the user provides the published asset ID.
+- Meshy generation requires `MESHY_API_KEY`. Downloaded GLB or FBX files still need Roblox Studio's native 3D Importer.
+
+## Roadmap
+
+1. Add a change journal and batch rollback.
+2. Improve Play-assisted runtime observation.
+3. Verify animation ownership after publishing.
+4. Add conversion checks and a guided native 3D import flow.
 5. Expand Creator Store metadata and licensing checks.
 6. Add screenshot capture through a local macOS companion.
 
-MCP compatibility can wrap the same tool registry later without changing the core agent.
+The same tool registry can later be exposed through MCP without changing the core agent.
