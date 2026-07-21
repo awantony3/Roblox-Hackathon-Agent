@@ -1,8 +1,10 @@
 # Roblox Hackathon Agent
 
-An autonomous Roblox Studio game-building agent that turns a natural-language goal into inspected, implemented, and verified changes inside an open Roblox project.
+An OpenAI-powered Roblox Studio game-building agent that turns a natural-language goal into inspected, implemented, and verified changes inside an open Roblox project.
 
-The system combines an OpenAI GPT-5.6-powered ReAct loop, typed tools, a queued HTTP bridge, a Roblox Studio plugin, evidence-based outcome evaluation, Reflexion retries, and human approval for destructive actions. ChatGPT and OpenAI Codex were also used as development collaborators while building the project.
+GPT-5.6 powers the agent's planning, tool selection, final responses, and evidence-grounded Reflexion retries through the official OpenAI SDK. Typed tools connect the model to a queued HTTP bridge and a Roblox Studio plugin, while human approval protects destructive actions. ChatGPT and OpenAI Codex also helped design, implement, test, and document the project.
+
+> **Runtime:** OpenAI GPT-5.6 via the Chat Completions API and function calling. Set `OPENAI_MODEL` to use another compatible OpenAI model.
 
 ## What it can do
 
@@ -27,37 +29,31 @@ User request
 Express API server
     │ creates a task
     ▼
-ReActAgent ───────────────► OpenAI GPT-5.6 API
-    ▲                                │
-    │                                │ returns text and typed tool calls
-    │                                ▼
-    └────────────────────────── Tool registry
-                                     │
-                         ┌───────────┴───────────┐
-                         │                       │
-                         ▼                       ▼
-                  Local integrations       StudioBridge
-                    such as Meshy                │ queues command
-                                                ▼
-                                      Roblox Studio plugin
-                                                │
-                                     inspects or changes game
-                                                │
-                                                ▼
-                                      structured tool result
-                                                │
-                                                ▼
-                                        OutcomeEvaluator
-                                      ┌─────────┴─────────┐
-                                      │                   │
-                                   passed        failed/inconclusive
-                                      │                   │
-                                      ▼                   ▼
-                                  complete        ReflexionEngine
-                                                          │
-                                                revised strategy
-                                                          │
-                                                          └──► next ReAct attempt
+ReActAgent ⇄ OpenAI GPT-5.6
+    │          plans, selects functions, and reads observations
+    ▼
+Typed tool registry
+    │
+    ├──► Backend integrations such as optional Meshy 3D generation
+    │
+    └──► StudioBridge command queue
+              │
+              ▼
+        Roblox Studio plugin
+              │ inspects or changes the open project
+              ▼
+        Structured tool result
+              │
+              └──────────────► ReActAgent
+
+Completed attempt
+    │
+    ▼
+OutcomeEvaluator
+    ├── passed ─────────────────────────────► Complete
+    └── failed or inconclusive ─────────────► OpenAI-powered Reflexion
+                                                   │ revised strategy
+                                                   └────────► Next ReAct attempt
 ```
 
 ### 1. API and task orchestration
@@ -77,7 +73,7 @@ The API is protected by `AGENT_API_KEY`, except for the public health endpoint.
 
 ### 2. ReAct reasoning loop
 
-`backend/src/agent/ReActAgent.ts` controls the main agent loop. The runtime model is accessed through `OpenAIClient`, which uses the official OpenAI SDK and function calling.
+`backend/src/agent/ReActAgent.ts` controls the main agent loop. `OpenAIClient` initializes the official OpenAI SDK with `OPENAI_API_KEY`. The ReAct agent calls the OpenAI Chat Completions API with the configured model and exposes the project tool registry as function definitions.
 
 For each attempt, the agent:
 
@@ -102,7 +98,7 @@ The tools fall into several groups:
 - **Asset workflows:** search and quarantine Creator Store assets or generate Meshy 3D assets.
 - **Validation:** validate project structure, observe runtime state, and evaluate playtest assertions.
 
-Most tools are forwarded to Roblox Studio. Meshy operations execute directly in the backend.
+Most tools are forwarded to Roblox Studio. Optional Meshy operations execute directly in the backend; Meshy generates external 3D assets but does not power the agent's reasoning.
 
 ### 4. Queued Studio bridge
 
@@ -172,7 +168,8 @@ docs/                              # Supporting project documentation
 
 ```bash
 cp .env.example .env
-# Add OPENAI_API_KEY to .env and change AGENT_API_KEY if desired.
+# Add OPENAI_API_KEY to .env and replace the default AGENT_API_KEY.
+# OPENAI_MODEL defaults to gpt-5.6.
 npm install
 npm start
 ```
@@ -216,13 +213,16 @@ Example:
 - Successful mutations remain undoable.
 - External artifact downloads are restricted by job, host, format, and size checks.
 
-## How ChatGPT and Codex helped
+## How OpenAI powers the project
 
-ChatGPT helped shape the product direction, reduce the idea to an achievable hackathon scope, reason through architecture and safety boundaries, and turn rough notes and test results into implementation plans and documentation.
+OpenAI is used in both the running application and the development workflow:
 
-OpenAI Codex worked directly with the repository and development environment. It helped scaffold and refine the TypeScript backend and Roblox Studio plugin, implement and inspect the ReAct and Reflexion loops, connect typed tools to Studio, diagnose integration problems, run focused checks, and create scripts used to build and test the Roblox experience.
+- **GPT-5.6 runtime:** interprets user goals, selects typed Roblox tools, consumes structured observations, writes final responses, and produces Reflexion retry strategies.
+- **Official OpenAI SDK:** authenticates with `OPENAI_API_KEY` and carries the model conversation and function calls.
+- **ChatGPT:** helped shape the product direction, hackathon scope, architecture, safety boundaries, and documentation.
+- **OpenAI Codex:** worked directly with the repository to implement, inspect, test, debug, and document the TypeScript backend and Roblox Studio plugin.
 
-These tools accelerated iteration and helped identify edge cases. The human developer directed the project, made product decisions, reviewed the generated work, tested it in Roblox Studio, and prepared the final submission. AI suggestions and code were treated as drafts until verified in the working experience.
+The human developer directed the project, made product decisions, reviewed the generated work, tested it in Roblox Studio, and prepared the final submission. AI suggestions and code were treated as drafts until verified in the working experience.
 
 ## Current limitations
 
