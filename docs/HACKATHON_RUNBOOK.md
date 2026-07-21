@@ -9,7 +9,7 @@ cp .env.example .env
 
 Required:
 
-- `ANTHROPIC_API_KEY` with available Claude API credit.
+- `OPENAI_API_KEY` with available OpenAI API credit.
 - `AGENT_API_KEY` set to a non-default local secret.
 
 Optional:
@@ -87,7 +87,7 @@ failure → observed evidence → reflection → revised strategy → verificati
 
 ## 6. Known blockers
 
-- Claude requires a funded Anthropic account.
+- GPT-5.6 requires an OpenAI API project with available credit and model access.
 - Studio must be restarted after plugin updates.
 - Play mode must be started by the user.
 - Animation publishing requires Roblox's authenticated UI.

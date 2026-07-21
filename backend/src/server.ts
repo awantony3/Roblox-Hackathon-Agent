@@ -31,7 +31,7 @@ app.get("/api/status", (_req, res) => {
   const sessions = studioBridge.sessions();
   const configuration = configurationStatus();
   const blockers: string[] = [];
-  if (!configuration.anthropicConfigured) blockers.push("ANTHROPIC_API_KEY is not configured");
+  if (!configuration.openaiConfigured) blockers.push("OPENAI_API_KEY is not configured");
   if (!sessions.some((session) => session.connected)) blockers.push("Roblox Studio plugin is not connected");
   if (configuration.apiKeyIsDefault) blockers.push("AGENT_API_KEY is still the default value");
   res.json({
@@ -77,7 +77,7 @@ app.post("/api/studio/results/:commandId", (req, res) => {
 app.post("/api/agent/tasks", (req, res) => {
   const { sessionId, message } = req.body;
   if (!sessionId || !message) return res.status(400).json({ error: "sessionId and message are required" });
-  if (!config.anthropicApiKey) return res.status(503).json({ error: "ANTHROPIC_API_KEY is not configured" });
+  if (!config.openaiApiKey) return res.status(503).json({ error: "OPENAI_API_KEY is not configured" });
   const connected = studioBridge.sessions().some((session) => session.sessionId === sessionId && session.connected);
   if (!connected) return res.status(409).json({ error: "Requested Roblox Studio session is not connected" });
   pruneTasks();

@@ -40,8 +40,8 @@ cp .env.example .env
 Configure `.env`:
 
 ```env
-ANTHROPIC_API_KEY=your-funded-anthropic-key
-CLAUDE_MODEL=claude-sonnet-4-20250514
+OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5.6
 PORT=3100
 AGENT_API_KEY=your-local-agent-key
 MAX_REACT_ITERATIONS=20
@@ -50,7 +50,7 @@ STUDIO_COMMAND_TIMEOUT_MS=30000
 MESHY_API_KEY=optional-production-meshy-key
 ```
 
-The Anthropic account must have available API credit. A syntactically valid key with no credit cannot run the ReAct or Reflexion demos.
+The OpenAI API project must have available credit and access to the configured model. A syntactically valid key without access or credit cannot run the ReAct or Reflexion demos.
 
 ### Verify the project
 
@@ -604,4 +604,3 @@ External blockers:
 Artifacts awaiting user action:
 Overall result:                PASS / FAIL
 ```
-

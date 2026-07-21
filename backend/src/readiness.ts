@@ -17,7 +17,7 @@ export async function runReadinessChecks(home = process.env.HOME || "") {
   const status = configurationStatus();
   const checks: DoctorCheck[] = [
     { name: "Node.js", ok: Number(process.versions.node.split(".")[0]) >= 18, detail: process.version },
-    { name: "Anthropic key", ok: status.anthropicConfigured, detail: status.anthropicConfigured ? "Configured" : "Set ANTHROPIC_API_KEY in .env" },
+    { name: "OpenAI key", ok: status.openaiConfigured, detail: status.openaiConfigured ? "Configured" : "Set OPENAI_API_KEY in .env" },
     { name: "Meshy key", ok: status.meshyConfigured, detail: status.meshyConfigured ? "Configured" : "Optional: set MESHY_API_KEY for production 3D generation" },
     { name: "Agent API key", ok: !status.apiKeyIsDefault, detail: status.apiKeyIsDefault ? "Replace the default AGENT_API_KEY and match it in the plugin" : "Custom value configured" },
     await fileCheck("Studio plugin source", path.resolve("studio-plugin/RobloxHackathonAgent.lua")),

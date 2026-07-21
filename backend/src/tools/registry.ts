@@ -1,6 +1,11 @@
-import type Anthropic from "@anthropic-ai/sdk";
 import { studioBridge } from "../studio/StudioBridge.js";
 import type { ToolResult } from "../types.js";
+
+export interface AgentTool {
+  name: string;
+  description: string;
+  input_schema: { type: "object"; properties: Record<string, unknown>; required?: string[] };
+}
 import { meshyClient } from "../assets/MeshyClient.js";
 
 const objectSchema = (properties: Record<string, unknown>, required: string[] = []) => ({ type: "object" as const, properties, required });
@@ -8,7 +13,7 @@ const str = { type: "string" };
 const bool = { type: "boolean" };
 const num = { type: "number" };
 
-export const tools: Anthropic.Tool[] = [
+export const tools: AgentTool[] = [
   { name: "scan_project", description: "See the current Roblox hierarchy, selection, place metadata, and recent output.", input_schema: objectSchema({}) },
   { name: "get_instance", description: "Inspect an instance and its properties by full Roblox path.", input_schema: objectSchema({ path: str }, ["path"]) },
   { name: "find_instances", description: "Search descendants by name fragment and optional Roblox class name.", input_schema: objectSchema({ root: str, nameContains: str, className: str, limit: num }) },
